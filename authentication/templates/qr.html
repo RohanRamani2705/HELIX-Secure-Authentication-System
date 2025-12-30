@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QR Badge - HELIX</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="centered-container">
+    <div class="orb"></div><div class="orb"></div>
+
+    <div class="card qr-container">
+        <h2>Your QR Badge</h2>
+
+        <img src="/qr_image/{{ image_name }}" alt="QR Code">
+
+        <div class="token-area">
+            <strong>Token:</strong>
+            <div>{{ token }}</div>
+        </div>
+
+        <a class="link" href="/dashboard">Back to Dashboard</a>
+    </div>
+</div>
+
+</body>
+</html>

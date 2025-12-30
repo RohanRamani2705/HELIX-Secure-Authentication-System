@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Up - HELIX</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script>
+    function checkStrength() {
+        let pw = document.getElementById("pw").value;
+        let bar = document.getElementById("strength-bar");
+
+        let score = 0;
+        if (pw.length >= 8) score++;
+        if (/[A-Z]/.test(pw)) score++;
+        if (/[a-z]/.test(pw)) score++;
+        if (/\d/.test(pw)) score++;
+        if (/[^A-Za-z0-9]/.test(pw)) score++;
+
+        bar.style.width = (score * 20) + "%";
+        let colors = ["red", "orange", "yellow", "gold", "lightgreen"];
+        bar.style.background = colors[score - 1] || "red";
+    }
+    </script>
+</head>
+<body>
+
+<div class="centered-container">
+    <div class="orb"></div><div class="orb"></div>
+
+    <div class="card">
+        <h2>Create Account</h2>
+
+        <form method="POST">
+            <!-- New Name field -->
+            <input type="text" name="name" placeholder="Full Name" required>
+
+            <input type="email" name="email" placeholder="Email" required>
+
+            <input id="pw" type="password" name="password" placeholder="Password"
+                   onkeyup="checkStrength()" required>
+            <div style="width:100%; background:#222; height:8px; border-radius:5px; margin-top:5px;">
+                <div id="strength-bar"
+                     style="height:8px; width:0%; border-radius:5px;"></div>
+            </div>
+
+            <input type="password" name="confirm" placeholder="Confirm Password" required>
+
+            <!-- Question group 1: identity -->
+            <label><strong>Security Question 1</strong></label>
+            <select name="sec_q1" required>
+                <option value="">Select question</option>
+                <option>Your first school name?</option>
+                <option>Your birthplace?</option>
+                <option>Your childhood nickname?</option>
+            </select>
+            <input type="text" name="sec_a1" placeholder="Answer 1" required>
+
+            <!-- Question group 2: preferences -->
+            <label><strong>Security Question 2</strong></label>
+            <select name="sec_q2" required>
+                <option value="">Select question</option>
+                <option>Your favorite movie?</option>
+                <option>Your favorite food?</option>
+                <option>Your favorite vacation place?</option>
+            </select>
+            <input type="text" name="sec_a2" placeholder="Answer 2" required>
+
+            <!-- Question group 3: assets/history -->
+            <label><strong>Security Question 3</strong></label>
+            <select name="sec_q3" required>
+                <option value="">Select question</option>
+                <option>Your first car model?</option>
+                <option>Your first phone model?</option>
+                <option>Your first pet's name?</option>
+            </select>
+            <input type="text" name="sec_a3" placeholder="Answer 3" required>
+
+            <button type="submit">Sign Up</button>
+        </form>
+
+        <p class="msg">{{ msg }}</p>
+        <a class="link" href="/">Back to Login</a>
+    </div>
+</div>
+
+</body>
+</html>

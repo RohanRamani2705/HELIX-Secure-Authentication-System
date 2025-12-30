@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trusted Devices - HELIX</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="dashboard-container">
+    <h2>Trusted Devices</h2>
+
+    <div class="box">
+
+        {% if devices %}
+            <table>
+                <tr>
+                    <th>Device ID</th>
+                    <th>Added On</th>
+                    <th>Action</th>
+                </tr>
+
+                {% for d in devices %}
+                <tr>
+                    <td>{{ d[1] }}</td>
+                    <td>{{ d[2] }}</td>
+                    <td>
+                        <a class="link" href="/remove_device/{{ d[0] }}">Remove</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>No trusted devices found.</p>
+        {% endif %}
+    </div>
+
+    <a class="link" href="/security_settings">Back to Security Settings</a>
+</div>
+
+</body>
+</html>

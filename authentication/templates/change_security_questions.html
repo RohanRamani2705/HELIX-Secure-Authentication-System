@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Change Security Questions - HELIX</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="centered-container">
+    <div class="orb"></div>
+
+    <div class="card">
+        <h2>Update Security Questions</h2>
+
+        <form method="POST">
+
+            <label>Question 1 (Current: {{ old_q1 }})</label>
+            <select name="sec_q1" required>
+                <option value="">Select question</option>
+                <option>Your first school name?</option>
+                <option>Your birthplace?</option>
+                <option>Your childhood nickname?</option>
+            </select>
+            <input type="text" name="sec_a1" placeholder="New answer" required>
+
+            <label>Question 2 (Current: {{ old_q2 }})</label>
+            <select name="sec_q2" required>
+                <option value="">Select question</option>
+                <option>Your favorite movie?</option>
+                <option>Your favorite food?</option>
+                <option>Your favorite vacation place?</option>
+            </select>
+            <input type="text" name="sec_a2" placeholder="New answer" required>
+
+            <label>Question 3 (Current: {{ old_q3 }})</label>
+            <select name="sec_q3" required>
+                <option value="">Select question</option>
+                <option>Your first car model?</option>
+                <option>Your first phone model?</option>
+                <option>Your first pet's name?</option>
+            </select>
+            <input type="text" name="sec_a3" placeholder="New answer" required>
+
+            <button type="submit">Save Changes</button>
+        </form>
+
+        <p class="msg">{{ msg }}</p>
+
+        <a class="link" href="/security_settings">Back to Security Settings</a>
+    </div>
+
+</div>
+
+</body>
+</html>

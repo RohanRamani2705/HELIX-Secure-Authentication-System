@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Security Logs - HELIX</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="dashboard-container">
+
+    {% if role == "admin" %}
+        <h2>All Security Logs (Admin View)</h2>
+    {% else %}
+        <h2>Your Security Logs</h2>
+    {% endif %}
+
+    {% if rows|length == 0 %}
+        <p style="color:#00e6b8; font-size:18px;">No logs found.</p>
+    {% else %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>IP</th>
+                    <th>Location</th>
+                    <th>Event</th>
+                    <th>Details</th>
+                    <th>Timestamp</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in rows %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>{{ row[4] }}</td>
+                    <td>{{ row[5] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    <a class="link" href="/dashboard">← Back to Dashboard</a>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Unlock Account - HELIX</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="centered-container">
+    <div class="orb"></div>
+
+    <div class="card unlock-card">
+        <h2>Unlock Account</h2>
+
+        <form method="POST">
+
+            {% if not show_questions %}
+                <!-- Step 1: only email -->
+                <input type="email" name="email_only" placeholder="Registered email" required>
+                <button type="submit">Next</button>
+
+            {% else %}
+                <!-- Step 2: show security questions -->
+                <input type="hidden" name="email" value="{{ email }}">
+
+                <label><strong>{{ q1 }}</strong></label>
+                <input type="text" name="answer1" placeholder="Answer 1" required>
+
+                <label><strong>{{ q2 }}</strong></label>
+                <input type="text" name="answer2" placeholder="Answer 2" required>
+
+                <label><strong>{{ q3 }}</strong></label>
+                <input type="text" name="answer3" placeholder="Answer 3" required>
+
+                <button type="submit">Verify Answers</button>
+            {% endif %}
+
+        </form>
+
+        <p class="msg">{{ msg }}</p>
+        <a class="link" href="/">Back to Login</a>
+    </div>
+</div>
+
+</body>
+</html>

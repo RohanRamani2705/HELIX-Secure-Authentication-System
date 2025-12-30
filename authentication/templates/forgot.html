@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Forgot Password - HELIX</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="centered-container">
+    <div class="orb"></div>
+
+    <div class="card">
+        <h2>Forgot Password</h2>
+
+        <form method="POST">
+            <input type="email" name="email" placeholder="Registered email" required>
+            <button type="submit">Send Reset Code</button>
+        </form>
+
+        <p class="msg">{{ msg }}</p>
+        <a class="link" href="/">Back to Login</a>
+    </div>
+</div>
+
+</body>
+</html>

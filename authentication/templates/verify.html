@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify Email - HELIX</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="centered-container">
+    <div class="orb"></div>
+
+    <div class="card">
+        <h2>Email Verification</h2>
+
+        <p>We sent a verification code to <strong>{{ email }}</strong>.</p>
+
+        <form method="POST">
+            <input type="text" name="code" placeholder="Enter verification code" required>
+            <button type="submit">Verify</button>
+        </form>
+
+        <p class="msg">{{ msg }}</p>
+        <a class="link" href="/">Back to login</a>
+    </div>
+</div>
+
+</body>
+</html>

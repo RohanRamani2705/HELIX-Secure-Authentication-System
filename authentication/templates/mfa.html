@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MFA Verification - HELIX</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="centered-container">
+    <div class="orb"></div><div class="orb"></div>
+
+    <div class="card">
+        <h2>Device Verification</h2>
+
+        <p>A login attempt was made from an unrecognized device.<br><br>
+        Enter the code sent to: <strong>{{ email }}</strong></p>
+
+        <form method="POST">
+            <input type="text" name="code" placeholder="Enter MFA code" required>
+            <button type="submit">Verify</button>
+        </form>
+
+        <p class="msg">{{ msg }}</p>
+        <a class="link" href="/">Cancel</a>
+    </div>
+</div>
+
+</body>
+</html>

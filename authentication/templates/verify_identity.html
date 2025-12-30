@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify Identity - HELIX</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="centered-container">
+    <div class="orb"></div>
+
+    <div class="card">
+
+        <h2>Identity Verification</h2>
+        <p>
+            We detected suspicious login attempts on your account.<br>
+            To continue, please complete a quick camera-based liveness check.
+        </p>
+
+        <p id="challenge" style="margin-top:10px; font-weight:bold; color:#00e6b8;">
+            Click "Start Camera" to begin.
+        </p>
+
+        <button type="button" onclick="startCamera()">Start Camera</button>
+
+        <div style="margin-top:20px;">
+            <video id="video" width="320" height="240" autoplay
+                   style="display:none; border-radius:10px; box-shadow:0 0 12px #00e6b8;"></video>
+        </div>
+
+        <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+
+        <button id="verify-btn" style="display:none; margin-top:12px;"
+                onclick="verifyLiveness()">
+            I Followed the Instruction
+        </button>
+
+        <p class="msg" id="status-msg"></p>
+
+        <a class="link" href="/">Cancel</a>
+
+    </div>
+</div>
+
+<script>
+let video = document.getElementById("video");
+let canvas = document.getElementById("canvas");
+let verifyBtn = document.getElementById("verify-btn");
+let challengeLabel = document.getElementById("challenge");
+let statusMsg = document.getElementById("status-msg");
+
+let stream = null;
+let baselineData = null;
+let blocked = false;
+let safeExit = false;   // true only when user passes liveness successfully
+
+let directions = [
+    "Turn your head LEFT",
+    "Turn your head RIGHT",
+    "Look UP",
+    "Look DOWN"
+];
+let currentChallenge = "";
+
+function pickChallenge() {
+    let idx = Math.floor(Math.random() * directions.length);
+    currentChallenge = directions[idx];
+    challengeLabel.textContent = "Liveness Challenge: " + currentChallenge;
+}
+
+// If the user refreshes/closes/goes back → lock account (unless safeExit=true)
+window.addEventListener("beforeunload", function() {
+    if (safeExit) return;
+    // sendBeacon uses POST by default; backend route handles locking
+    navigator.sendBeacon("/verify_identity_denied");
+});
+
+function startCamera() {
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(s => {
+            stream = s;
+            video.srcObject = s;
+            video.style.display = "block";
+            verifyBtn.style.display = "inline-block";
+            statusMsg.textContent = "Camera started. Please follow the on-screen instruction.";
+            statusMsg.style.color = "#80e6d1";
+            pickChallenge();
+
+            setTimeout(captureBaseline, 1000);
+            setInterval(checkObstruction, 1200);
+        })
+        .catch(err => {
+            alert("Camera access denied. Your account will now be locked for security.");
+
+            fetch("/verify_identity_denied", { method: "POST" })
+                .then(() => { window.location = "/"; })
+                .catch(() => { window.location = "/"; });
+        });
+}
+
+function captureBaseline() {
+    if (!stream || blocked) return;
+    canvas.style.display = "block";
+    let ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    baselineData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+}
+
+function checkObstruction() {
+    if (!stream || blocked || !baselineData) return;
+
+    let ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    let frame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    let data = frame.data;
+    let total = 0;
+    let totalSq = 0;
+    let pixelCount = data.length / 4;
+
+    for (let i = 0; i < data.length; i += 4) {
+        let r = data[i];
+        let g = data[i+1];
+        let b = data[i+2];
+        let brightness = (r + g + b) / 3;
+        total += brightness;
+        totalSq += brightness * brightness;
+    }
+
+    let mean = total / pixelCount;
+    let variance = (totalSq / pixelCount) - (mean * mean);
+    let stddev = Math.sqrt(variance);
+
+    // If camera is covered / too dark → treat as refusal and lock
+    if (mean < 15 || stddev < 3) {
+        blocked = true;
+        statusMsg.textContent = "Camera appears to be covered or too dark. Account will be locked for security.";
+        statusMsg.style.color = "#ff8080";
+        stopStream();
+        alert("Camera is covered or not providing a clear image. Your account will now be locked.");
+
+        fetch("/verify_identity_denied", { method: "POST" })
+            .then(() => { window.location = "/"; })
+            .catch(() => { window.location = "/"; });
+    }
+}
+
+function verifyLiveness() {
+    if (!stream || blocked) {
+        alert("Camera is not active or blocked. Cannot verify.");
+        return;
+    }
+
+    let ctx = canvas.getContext("2d");
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    let newFrame = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+    if (!baselineData) {
+        alert("Baseline image not ready. Please wait a moment and try again.");
+        return;
+    }
+
+    let diffCount = 0;
+    let threshold = 30;
+    let neededDiff = 0.08;
+
+    let base = baselineData.data;
+    let data = newFrame.data;
+    let len = data.length;
+
+    for (let i = 0; i < len; i += 4) {
+        let rb = base[i],   gb = base[i+1],   bb = base[i+2];
+        let rn = data[i],   gn = data[i+1],   bn = data[i+2];
+
+        let b1 = (rb + gb + bb) / 3;
+        let b2 = (rn + gn + bn) / 3;
+
+        if (Math.abs(b1 - b2) > threshold) {
+            diffCount++;
+        }
+    }
+
+    let changedRatio = diffCount / (len / 4);
+
+    if (changedRatio < neededDiff) {
+        statusMsg.textContent = "Not enough movement detected. Please follow the instruction more clearly.";
+        statusMsg.style.color = "#ffcc66";
+        alert("We did not detect enough movement. Please move your head as instructed and try again.");
+        captureBaseline();
+        return;
+    }
+
+    statusMsg.textContent = "Liveness check passed. Uploading image…";
+    statusMsg.style.color = "#80e6d1";
+
+    canvas.toBlob(function(blob) {
+        let form = new FormData();
+        form.append("photo", blob, "liveness.jpg");
+
+        fetch("/verify_identity_capture", {
+            method: "POST",
+            body: form
+        })
+        .then(response => response.text())
+        .then(data => {
+            if (data === "OK") {
+                safeExit = true;  // do NOT lock on beforeunload
+                stopStream();
+                alert("Identity verification successful. Please log in again.");
+                window.location = "/";
+            } else {
+                alert("Error from server: " + data);
+            }
+        })
+        .catch(err => {
+            alert("Network error: " + err);
+        });
+    }, "image/jpeg");
+}
+
+function stopStream() {
+    if (stream) {
+        let tracks = stream.getTracks();
+        tracks.forEach(t => t.stop());
+    }
+    stream = null;
+}
+</script>
+
+</body>
+</html>

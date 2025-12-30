@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Intruder Gallery - HELIX</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="dashboard-container">
+    <h2>Your Intruder Gallery</h2>
+
+    {% if images|length == 0 %}
+        <p style="color:#00e6b8; font-size:18px;">No intruder images recorded for your account.</p>
+    {% else %}
+        <div class="gallery-grid">
+            {% for file in images %}
+            <div class="gallery-item">
+                <img src="/intruders/{{ user }}/{{ file }}" alt="Intruder Image">
+                <p style="text-align:center; margin-top:8px; font-size:14px; color:#80e6d1;">
+                    {{ file }}
+                </p>
+            </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <a class="link" href="/dashboard">← Back to Dashboard</a>
+</div>
+
+</body>
+</html>

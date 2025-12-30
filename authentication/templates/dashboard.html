@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard - HELIX</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="dashboard-container">
+    <h2>Welcome, {{ name }}</h2>
+
+    <div class="box">
+        <p>
+            This is your HELIX Security Dashboard.
+        </p>
+
+        <p>From here you can manage your account and monitor security:</p>
+
+        <ul style="list-style:none; padding-left:0; margin-top:10px;">
+            <li><a class="link" href="/security_settings">Security Settings</a></li>
+            <li><a class="link" href="/logs">View Security Logs</a></li>
+            <li><a class="link" href="/gallery">Intruder Gallery</a></li>
+            <li><a class="link" href="/qr">Your QR Security Badge</a></li>
+        </ul>
+
+        <a class="link" style="margin-top:20px;" href="/logout">Log Out</a>
+    </div>
+</div>
+
+</body>
+</html>

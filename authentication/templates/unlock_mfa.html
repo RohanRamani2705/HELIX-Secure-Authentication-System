@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Unlock MFA - HELIX</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="centered-container">
+    <div class="orb"></div>
+
+    <div class="card">
+        <h2>MFA Verification</h2>
+
+        <p>An unlock request was made for:<br><strong>{{ email }}</strong><br><br>
+        Enter the OTP sent to your email.</p>
+
+        <form method="POST">
+            <input type="text" name="code" placeholder="Enter OTP" required>
+            <button type="submit">Verify & Unlock</button>
+        </form>
+
+        <p class="msg">{{ msg }}</p>
+        <a class="link" href="/">Cancel</a>
+    </div>
+</div>
+
+</body>
+</html>
